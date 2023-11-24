@@ -1,0 +1,38 @@
+@use '../helpers' as *;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  ~ .btn {
+    margin-left: 1rem;
+  }
+  > span {
+    pointer-events: none;
+  }
+  &-area {
+    display: flex;
+    width: 100%;
+    .btn {
+      width: 100%;
+      ~ .btn {
+        margin-left: 1rem;
+      }
+    }
+  }
+  &-primary {
+    height: 4rem;
+    padding: 0 2rem;
+    background-color: $primary1;
+    border-radius: 1rem;
+    @include fontHeight(1.4);
+    color: $white;
+  }
+  &-secondary {
+    height: 4rem;
+    padding: 0 2rem;
+    background-color: $secondary1;
+    border-radius: 1rem;
+    @include fontHeight(1.4);
+    color: $white;
+  }
+}

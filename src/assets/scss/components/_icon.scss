@@ -1,0 +1,66 @@
+@use '../helpers' as *;
+
+// icon
+$icons: (
+  // 12
+  12 'arrow' 'gray',
+  12 'arrow' 'gray2',
+  // 16
+  16 'arrow',
+  16 'arrow' 'active',
+  16 'arrow' 'disabled',
+  16 'clear' 'gray',
+  // 24
+  24 'menu' 'white',
+  // 28
+  28 'close',
+  28 'close' 'white',
+);
+
+.icon {
+  &.right {
+    transform: rotate(90deg);
+  }
+
+  &.down {
+    transform: rotate(180deg);
+  }
+
+  &.left {
+    transform: rotate(-90deg);
+  }
+
+  @each $size, $name, $color, $status in $icons {
+    &-#{$size} {
+      &-#{$name} {
+        @if $color {
+          &-#{$color} {
+            @include icon($size, #{$name}_#{$color});
+
+            @if $color =='active' {
+              &-active {
+                @include icon($size, #{$name}_active);
+              }
+            }
+
+            @else if $color =='disabled' {
+              &-disabled {
+                @include icon($size, #{$name}_disabled);
+              }
+            }
+
+            @if $status {
+              &-#{$status} {
+                @include icon($size, #{$name}_#{$color}_#{$status});
+              }
+            }
+          }
+        }
+
+        @else {
+          @include icon($size, #{$name});
+        }
+      }
+    }
+  }
+}
