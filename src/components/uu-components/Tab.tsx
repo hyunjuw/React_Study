@@ -1,15 +1,35 @@
-import React from "react";
-export type TabsProps = {
-  key?: number;
-  title: string;
-  children: React.ReactNode;
+import React, { PropsWithChildren, useState } from "react";
+
+type TabProps = {
+  title: string | JSX.Element | JSX.Element[] | (() => JSX.Element);
+  key: number;
+  active?: boolean;
+  disabled?: boolean;
+  children: string | JSX.Element | JSX.Element[] | (() => JSX.Element);
 };
-function Tab({ title, children }: TabsProps): React.ReactElement {
-  return (
-    <div className="tab-content-panel" role="tabpanel">
-      <div className="tab-panel-inner">{children}</div>
-    </div>
-  );
+Tab.defaultProps = {
+  title: "Tab",
+  key: 0,
+  active: false,
+  disabled: false,
+  children: <></>,
+};
+function Tab({
+  title,
+  key,
+  active,
+  disabled,
+  children,
+}: PropsWithChildren<TabProps>) {
+  const tab = useState({
+    title: title,
+    key: key,
+    active: active,
+    disabled: disabled,
+    children: children,
+  });
+  console.log(tab);
+  return <></>;
 }
 
 export default Tab;

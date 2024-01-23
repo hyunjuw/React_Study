@@ -1,5 +1,5 @@
-import React from 'react';
-import '@assets/css/guide.css';
+import React from "react";
+import "@assets/scss/guide.scss";
 
 function NoMatch() {
   return <div>NoMatch</div>;

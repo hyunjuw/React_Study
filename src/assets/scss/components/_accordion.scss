@@ -60,11 +60,11 @@
       overflow: hidden;
       background-color: $bg3;
       transition: height .3s ease-in-out;
-      &-enter-active, &-leave-active {
+      &-enter-active, &-exit-active {
         transition: all .3s ease;
       }
-      &-enter-from, &-leave-to {
-        height: 0 !important;
+      &-enter, &-exit {
+        height: 0;
       }
       .accordion-content {
         padding: 2rem;

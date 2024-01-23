@@ -2,71 +2,72 @@ import React, { useEffect, useState } from "react";
 // import PropTypes from "prop-types";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import guideNav, { type navInterface } from "@/views/_guide/guideNav";
-import "@assets/css/guide.css";
+import "@assets/scss/guide.scss";
+
+type Nav = {
+  name: string;
+  url: string;
+};
 
 function ListGuide() {
-  const navs = guideNav();
+  const navs = guideNav() as navInterface[];
+  const [gnb, setGnb] = useState<string[]>([]);
+  const [lnb, setLnb] = useState<Nav[][]>([]);
+  const [activeIndex, setActiveIndex] = useState<number>(0); // header nav
+  const [subActiveIndex, setSubActiveIndex] = useState<number>(0); // aside nav
   const location = useLocation().pathname;
-  const [activeIndex, setActive] = useState(0); // header nav
-  const [subActiveIndex, setSubActive] = useState(0); // aside nav
-  const [url, setUrl] = useState<string[]>([]);
-
-  const title: string[] = [];
-  const subMenu: navInterface["nav"][] = [];
-  const subUrl: string[][] = [];
-
-  navs.map((item) => {
-    subMenu.push(item.nav);
-    title.push(item.title);
-  });
-  subMenu.filter((item) => {
-    subUrl.push(item.map((sub) => sub.url));
-  });
-
-  const chageUrl = (index: number) => {
-    subUrl.map((item) => {
-      setUrl((old: any) => [...old, item[index]]);
-    });
-  };
+  const [gnbUrl, setGnbUrl] = useState<string[]>([]);
+  const [lnbUrl, setLnbUrl] = useState<string[][]>([]);
 
   useEffect(() => {
-    subUrl.map((item, i) => {
-      item.indexOf(location) > -1 ? setActive(i) : null;
+    navs.map((item) => {
+      setGnb((gnb) => [...gnb, item.title]); // title
+      setLnb((lnb) => [...lnb, [...item.nav]]); // subMenu
     });
-    chageUrl(0);
-    console.log(subUrl);
-  }, [activeIndex]);
+  }, []);
 
   useEffect(() => {
-    subUrl.map((item, i, arr) => {
+    lnb.map((item) => {
+      setGnbUrl((gnbUrl) => [...gnbUrl, item[0].url]);
+      setLnbUrl((lnbUrl) => [...lnbUrl, item.map((sub) => sub.url)]); // subUrl
+    });
+  }, [lnb]);
+
+  useEffect(() => {
+    const category = location.split("/")[2];
+    gnbUrl.map((item, i, arr) => {
+      if (item.split("/")[2] === category) {
+        setActiveIndex(i);
+        arr[i] = location;
+      }
+    });
+    lnbUrl.map((item) => {
       if (item.indexOf(location) > -1) {
-        arr[i].map((sub) => {
-          if (sub.indexOf(location) > -1) {
-            const category = url.map((itemUrl) => {
-              const slice = itemUrl.split("/");
-              return slice[2];
-            });
-            const locationSlice = location.split("/");
-            category.filter((categoryUrl) => {
-              if (categoryUrl === locationSlice[2]) {
-                url[i] = sub;
-              }
-            });
-          }
-        });
         item.map((sub, j) => {
-          sub.indexOf(location) > -1 ? setSubActive(j) : null;
+          sub.indexOf(location) > -1 ? setSubActiveIndex(j) : null;
         });
       }
     });
-  }, [subActiveIndex]);
+  }, [navs]);
 
+  const changeUrl = (index: number) => {
+    const locationCategory = location.split("/")[2];
+    const gnbCategory = gnbUrl[activeIndex].split("/")[2];
+    lnbUrl.map((item) => {
+      if (item.indexOf(location) > -1) {
+        locationCategory === gnbCategory
+          ? (gnbUrl[activeIndex] = item[index])
+          : null;
+      }
+    });
+  };
   const changeIndex = (i: number) => {
-    setActive(i);
-    setSubActive(0);
+    setActiveIndex(i);
+    setSubActiveIndex(0);
   };
   const changeSubIndex = (i: number) => {
-    setSubActive(i);
+    setSubActiveIndex(i);
+    changeUrl(i);
   };
   return (
     <div>
@@ -74,16 +75,16 @@ function ListGuide() {
         <header className="guide-header">
           <h1 className="logo">
             <Link to={`/`} title="페이지 이동">
-              Name
+              Openobject
             </Link>
           </h1>
           <nav>
             <ul className="guide-header-nav">
-              {title.map((item, i) => {
+              {gnb.map((item, i) => {
                 return (
                   <li key={item}>
                     <NavLink
-                      to={url[i]}
+                      to={gnbUrl[i]}
                       className={({ isActive }) =>
                         isActive ? "btn btn-text is-active" : "btn btn-text"
                       }
@@ -113,14 +114,14 @@ function ListGuide() {
         </header>
         <main className="container guide-container">
           <aside className="guide-aside">
-            <h2 className="guide-aside-title">{title[activeIndex]}</h2>
+            <h2 className="guide-aside-title">{gnb[activeIndex]}</h2>
             <nav className="guide-aside-nav">
               <ul>
-                {subMenu[activeIndex].map((menu, i) => {
+                {lnb[activeIndex]?.map((sub, i) => {
                   return (
                     <li className="menu-item" key={i}>
                       <NavLink
-                        to={menu.url}
+                        to={sub.url}
                         className={({ isActive }) =>
                           isActive ? "is-active" : ""
                         }
@@ -128,7 +129,7 @@ function ListGuide() {
                           changeSubIndex(i);
                         }}
                       >
-                        {menu.name}
+                        {sub.name}
                       </NavLink>
                     </li>
                   );
@@ -139,8 +140,8 @@ function ListGuide() {
           <div className="content guide-page">
             <div className="content-header">
               <h2 className="content-title">
-                {subMenu[activeIndex].map((menu, i) => {
-                  return menu.url === location ? menu.name : "";
+                {lnb[activeIndex]?.map((sub) => {
+                  return sub.url === location ? sub.name : "";
                 })}
               </h2>
             </div>

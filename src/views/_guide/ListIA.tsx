@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Tabs from "@/components/uu-components/Tabs";
-import Tab from "@/components/uu-components/Tab";
+import Tabs from "@components/uu-components/Tabs";
+import Tab from "@components/uu-components/Tab";
 import listTable, { type listTableType } from "./ListTable";
-import "@assets/css/guide.css";
+import "@assets/scss/guide.scss";
 
 interface pageDataType {
   total: number;
@@ -97,7 +97,7 @@ function ListIA() {
       <header className="guide-header">
         <h1 className="logo">
           <Link to={`/`} title="현황판 페이지 이동">
-            Openobject
+            Name
           </Link>
         </h1>
         <nav>
